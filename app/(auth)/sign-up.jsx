@@ -1,12 +1,12 @@
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import { React, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 
 import { images } from "../../constants"
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-
+import { createUser } from '../../lib/appwrite.js'
 
 const SignUp = () => {
     const [form, setform] = useState({
@@ -17,8 +17,26 @@ const SignUp = () => {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const submit = () => {
+    const submit = async () => {
+        try {
+            if (!form.username || !form.email || !form.password) {
+                Alert.alert('Error', 'Please fill in all the fields')
+            }
 
+            setIsSubmitting(true)
+
+            const result = await createUser(form.email, form.username, form.password)
+            console.log(result)
+
+            // set it to global state
+
+            router.replace('/home')
+        } catch (error) {
+            console.log(error.message)
+            Alert.alert('Error', error.message)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -30,7 +48,7 @@ const SignUp = () => {
                         resizeMode='contain'
                         className="w-[115px] h-[35px]"
                     />
-                    <Text className="text-2xl text-semibold font-psemibold text-white mt-10">Sign In to Aora</Text>
+                    <Text className="text-2xl text-semibold font-psemibold text-white mt-10">Sign Up to Aora</Text>
 
                     <FormField
                         title="Username"
@@ -54,7 +72,7 @@ const SignUp = () => {
                     />
 
                     <CustomButton
-                        title="Sign In"
+                        title="Sign Up"
                         handlePress={submit}
                         containerStyles="mt-7"
                         isLoading={isSubmitting}

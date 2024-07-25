@@ -5,11 +5,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { images } from '../constants';
 import CustomButton from '../components/CustomButton';
+import { useGlobalContext } from '../context/GlobalProvider';
+import { useEffect } from 'react';
 
 export default function App() {
+    const { isLoading, isLoggedIn } = useGlobalContext()
+
+    if (!isLoading && isLoggedIn) return router.push("/home")
+
+    // useEffect(() => {
+    //     if (!isLoading && isLoggedIn) return router.push("/home")
+    // }, [])
+    
     return (
         <SafeAreaView className="bg-primary min-h-full">
-            <ScrollView contentContainerStyle={ {height: "100%"} }>
+            <ScrollView contentContainerStyle={{ height: "100%" }}>
                 <View className="w-full justify-center items-center h-full px-4">
                     <Image
                         source={images.logo}
@@ -36,15 +46,15 @@ export default function App() {
                     </View>
 
                     <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">Where creativity meets innovation: embark on a journeyof limitless exploration with Aora</Text>
-                    <CustomButton 
+                    <CustomButton
                         title="Continue with Email"
-                        handlePress={ () => router.push("/sign-in") }
+                        handlePress={() => router.push("/sign-in")}
                         containerStyles="w-full mt-7"
                     />
                 </View>
-            </ScrollView>
 
-            <StatusBar backgroundColor='#161622' style='light' />
+                <StatusBar backgroundColor='#161622' style='light' />
+            </ScrollView>
         </SafeAreaView>
     );
 }
